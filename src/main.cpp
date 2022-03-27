@@ -1,23 +1,14 @@
 extern "C"
 {
-#include "nrf_log.h"
-#include "nrf_log_ctrl.h"
-#include "nrf_log_default_backends.h"
+
 #include "nrf_pwr_mgmt.h"
 }
 
-#include "BLE_Manager.h"
-#include "LED.h"
-#include "Button.h"
-
-// Function for initializing the nrf log module.
-static void log_init(void)
-{
-    ret_code_t err_code = NRF_LOG_INIT(NULL);
-    APP_ERROR_CHECK(err_code);
-
-    NRF_LOG_DEFAULT_BACKENDS_INIT();
-}
+#include "HZM_BLE.h"
+#include "HZM_LED.h"
+#include "HZM_Button.h"
+#include "HZM_Power.h"
+#include "HZM_Log.h"
 
 // Function for starting timers.
 static void application_timers_start(void)
@@ -28,52 +19,35 @@ static void application_timers_start(void)
        APP_ERROR_CHECK(err_code); */
 }
 
-// Function for initializing power management.
-static void power_management_init(void)
-{
-    ret_code_t err_code;
-    err_code = nrf_pwr_mgmt_init();
-    APP_ERROR_CHECK(err_code);
-}
-
-// Function for handling the idle state (main loop).
-static void idle_state_handle(void)
-{
-    if (NRF_LOG_PROCESS() == false)
-    {
-        nrf_pwr_mgmt_run();
-    }
-}
-
 // Function for application main entry.
 int main(void)
 {
     bool erase_bonds;
 
     // Initialize.
-    log_init();
-    BLE_Manager::timers_init();
-    power_management_init();
-    BLE_Manager::ble_stack_init();
-    BLE_Manager::gap_params_init();
-    BLE_Manager::gatt_init();
-    BLE_Manager::advertising_init();
-    BLE_Manager::services_init();
-    BLE_Manager::conn_params_init();
-    BLE_Manager::peer_manager_init();
-    LED::init();
-    Button::init(&erase_bonds);
+    HZM_Log::log_init();
+    HZM_BLE::timers_init();
+    HZM_Power::power_management_init();
+    HZM_BLE::ble_stack_init();
+    HZM_BLE::gap_params_init();
+    HZM_BLE::gatt_init();
+    HZM_BLE::advertising_init();
+    HZM_BLE::services_init();
+    HZM_BLE::conn_params_init();
+    HZM_BLE::peer_manager_init();
+    HZM_LED::init();
+    HZM_Button::init(&erase_bonds);
 
     // Start execution.
-    NRF_LOG_INFO("Template example started.");
+    HZM_Log::print_info("Template example started.");
     application_timers_start();
-    BLE_Manager::advertising_start(erase_bonds);
-    LED::turn_on();
+    HZM_BLE::advertising_start(erase_bonds);
+    HZM_LED::turn_on();
 
     // Enter main loop.
     for (;;)
     {
-        Button::read() ? LED::turn_on() : LED::turn_off();
+        HZM_Button::read() ? HZM_LED::turn_on() : HZM_LED::turn_off();
         // idle_state_handle();
     }
 }

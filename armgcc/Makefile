@@ -57,9 +57,11 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/bsp/bsp.c \
   $(SDK_ROOT)/components/libraries/bsp/bsp_btn_ble.c \
   $(PROJ_DIR)/main.cpp \
-  $(PROJ_DIR)/BLE_Manager/BLE_Manager.cpp \
-  $(PROJ_DIR)/LED/LED.cpp \
-  $(PROJ_DIR)/Button/Button.cpp \
+  $(PROJ_DIR)/HZM_BLE/HZM_BLE.cpp \
+  $(PROJ_DIR)/HZM_LED/HZM_LED.cpp \
+  $(PROJ_DIR)/HZM_Button/HZM_Button.cpp \
+  $(PROJ_DIR)/HZM_Log/HZM_Log.cpp \
+  $(PROJ_DIR)/HZM_Power/HZM_Power.cpp \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
@@ -219,9 +221,11 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/nfc/ndef/conn_hand_parser/ac_rec_parser \
   $(SDK_ROOT)/components/libraries/stack_guard \
   $(SDK_ROOT)/components/libraries/log/src \
-  $(PROJ_DIR)/BLE_Manager \
-  $(PROJ_DIR)/LED \
-  $(PROJ_DIR)/Button \
+  $(PROJ_DIR)/HZM_BLE \
+  $(PROJ_DIR)/HZM_LED \
+  $(PROJ_DIR)/HZM_Button \
+  $(PROJ_DIR)/HZM_Log \
+  $(PROJ_DIR)/HZM_Power \
 
 # Libraries common to all targets
 LIB_FILES += \
