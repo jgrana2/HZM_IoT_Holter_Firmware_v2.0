@@ -3,10 +3,9 @@ extern "C"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
+#include "sdk_errors.h"
 }
 #include "HZM_Log.h"
-#include "sdk_errors.h"
-
 
 HZM_Log::HZM_Log(/* args */)
 {

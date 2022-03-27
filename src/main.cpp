@@ -1,6 +1,5 @@
 extern "C"
 {
-
 #include "nrf_pwr_mgmt.h"
 }
 
@@ -9,15 +8,7 @@ extern "C"
 #include "HZM_Button.h"
 #include "HZM_Power.h"
 #include "HZM_Log.h"
-
-// Function for starting timers.
-static void application_timers_start(void)
-{
-    /* YOUR_JOB: Start your timers. below is an example of how to start a timer.
-       ret_code_t err_code;
-       err_code = app_timer_start(m_app_timer_id, TIMER_INTERVAL, NULL);
-       APP_ERROR_CHECK(err_code); */
-}
+#include "HZM_Timer.h"
 
 // Function for application main entry.
 int main(void)
@@ -26,7 +17,7 @@ int main(void)
 
     // Initialize.
     HZM_Log::log_init();
-    HZM_BLE::timers_init();
+    HZM_Timer::timers_init();
     HZM_Power::power_management_init();
     HZM_BLE::ble_stack_init();
     HZM_BLE::gap_params_init();
@@ -40,7 +31,7 @@ int main(void)
 
     // Start execution.
     HZM_Log::print_info("Template example started.");
-    application_timers_start();
+    HZM_Timer::application_timers_start();
     HZM_BLE::advertising_start(erase_bonds);
     HZM_LED::turn_on();
 

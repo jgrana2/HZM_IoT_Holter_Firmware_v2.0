@@ -62,6 +62,7 @@ SRC_FILES += \
   $(PROJ_DIR)/HZM_Button/HZM_Button.cpp \
   $(PROJ_DIR)/HZM_Log/HZM_Log.cpp \
   $(PROJ_DIR)/HZM_Power/HZM_Power.cpp \
+  $(PROJ_DIR)/HZM_Timer/HZM_Timer.cpp \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
@@ -226,6 +227,7 @@ INC_FOLDERS += \
   $(PROJ_DIR)/HZM_Button \
   $(PROJ_DIR)/HZM_Log \
   $(PROJ_DIR)/HZM_Power \
+  $(PROJ_DIR)/HZM_Timer \
 
 # Libraries common to all targets
 LIB_FILES += \
