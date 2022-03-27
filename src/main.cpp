@@ -10,8 +10,7 @@ extern "C"
 #include "LED.h"
 #include "Button.h"
 
-/**@brief Function for initializing the nrf log module.
- */
+// Function for initializing the nrf log module.
 static void log_init(void)
 {
     ret_code_t err_code = NRF_LOG_INIT(NULL);
@@ -20,8 +19,7 @@ static void log_init(void)
     NRF_LOG_DEFAULT_BACKENDS_INIT();
 }
 
-/**@brief Function for starting timers.
- */
+// Function for starting timers.
 static void application_timers_start(void)
 {
     /* YOUR_JOB: Start your timers. below is an example of how to start a timer.
@@ -30,8 +28,7 @@ static void application_timers_start(void)
        APP_ERROR_CHECK(err_code); */
 }
 
-/**@brief Function for initializing power management.
- */
+// Function for initializing power management.
 static void power_management_init(void)
 {
     ret_code_t err_code;
@@ -39,10 +36,7 @@ static void power_management_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-/**@brief Function for handling the idle state (main loop).
- *
- * @details If there is no pending log operation, then sleep until next the next event occurs.
- */
+// Function for handling the idle state (main loop).
 static void idle_state_handle(void)
 {
     if (NRF_LOG_PROCESS() == false)
@@ -51,8 +45,7 @@ static void idle_state_handle(void)
     }
 }
 
-/**@brief Function for application main entry.
- */
+// Function for application main entry.
 int main(void)
 {
     bool erase_bonds;
@@ -76,15 +69,11 @@ int main(void)
     application_timers_start();
     BLE_Manager::advertising_start(erase_bonds);
     LED::turn_on();
-   
+
     // Enter main loop.
     for (;;)
     {
-        Button::read() ? LED::turn_on() : LED::turn_off(); 
+        Button::read() ? LED::turn_on() : LED::turn_off();
         // idle_state_handle();
     }
 }
-
-/**
- * @}
- */
