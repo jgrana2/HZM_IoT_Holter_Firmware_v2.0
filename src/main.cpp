@@ -7,6 +7,8 @@ extern "C"
 }
 
 #include "BLE_Manager.h"
+#include "LED.h"
+#include "Button.h"
 
 /**@brief Function for initializing the nrf log module.
  */
@@ -16,25 +18,6 @@ static void log_init(void)
     APP_ERROR_CHECK(err_code);
 
     NRF_LOG_DEFAULT_BACKENDS_INIT();
-}
-
-/**@brief Function for initializing buttons and leds.
- *
- * @param[out] p_erase_bonds  Will be true if the clear bonding button was pressed to wake the application up.
- */
-
-void buttons_leds_init(bool *p_erase_bonds)
-{
-    ret_code_t err_code;
-    bsp_event_t startup_event;
-
-    err_code = bsp_init(BSP_INIT_LEDS | BSP_INIT_BUTTONS, BLE_Manager::bsp_event_handler);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = bsp_btn_ble_init(NULL, &startup_event);
-    APP_ERROR_CHECK(err_code);
-
-    *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
 }
 
 /**@brief Function for starting timers.
@@ -77,7 +60,6 @@ int main(void)
     // Initialize.
     log_init();
     BLE_Manager::timers_init();
-    buttons_leds_init(&erase_bonds);
     power_management_init();
     BLE_Manager::ble_stack_init();
     BLE_Manager::gap_params_init();
@@ -86,17 +68,20 @@ int main(void)
     BLE_Manager::services_init();
     BLE_Manager::conn_params_init();
     BLE_Manager::peer_manager_init();
+    LED::init();
+    Button::init(&erase_bonds);
 
     // Start execution.
     NRF_LOG_INFO("Template example started.");
     application_timers_start();
-
     BLE_Manager::advertising_start(erase_bonds);
-
+    LED::turn_on();
+   
     // Enter main loop.
     for (;;)
     {
-        idle_state_handle();
+        Button::read() ? LED::turn_on() : LED::turn_off(); 
+        // idle_state_handle();
     }
 }
 

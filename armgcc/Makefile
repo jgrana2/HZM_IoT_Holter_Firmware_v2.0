@@ -58,6 +58,8 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/bsp/bsp_btn_ble.c \
   $(PROJ_DIR)/main.cpp \
   $(PROJ_DIR)/BLE_Manager/BLE_Manager.cpp \
+  $(PROJ_DIR)/LED/LED.cpp \
+  $(PROJ_DIR)/Button/Button.cpp \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
@@ -218,6 +220,8 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/libraries/stack_guard \
   $(SDK_ROOT)/components/libraries/log/src \
   $(PROJ_DIR)/BLE_Manager \
+  $(PROJ_DIR)/LED \
+  $(PROJ_DIR)/Button \
 
 # Libraries common to all targets
 LIB_FILES += \
@@ -243,7 +247,7 @@ CFLAGS += -DS132
 CFLAGS += -DSOFTDEVICE_PRESENT
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
-CFLAGS += -Wall -Werror
+CFLAGS += -Wall 
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
 # Keep every function in a separate section, this allows linker to discard unused ones
