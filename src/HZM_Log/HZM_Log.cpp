@@ -23,7 +23,12 @@ void HZM_Log::log_init(void)
 	NRF_LOG_DEFAULT_BACKENDS_INIT();
 }
 
-void HZM_Log::print_info(const char *text)
+void HZM_Log::print(char *text)
 {
 	NRF_LOG_INFO(text);
+}
+
+void HZM_Log::hexdump(uint8_t *p_data, uint32_t len)
+{
+	NRF_LOG_HEXDUMP_INFO(p_data, len);
 }
