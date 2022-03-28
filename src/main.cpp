@@ -1,8 +1,3 @@
-extern "C"
-{
-#include "nrf_pwr_mgmt.h"
-}
-
 #include "HZM_BLE.h"
 #include "HZM_LED.h"
 #include "HZM_Button.h"
@@ -30,7 +25,7 @@ int main(void)
     HZM_Button::init(&erase_bonds);
 
     // Start execution.
-    HZM_Log::print_info("Template example started.");
+    HZM_Log::print((char*)"Template example started.");
     HZM_Timer::application_timers_start();
     HZM_BLE::advertising_start(erase_bonds);
     HZM_LED::turn_on();
@@ -39,6 +34,5 @@ int main(void)
     for (;;)
     {
         HZM_Button::read() ? HZM_LED::turn_on() : HZM_LED::turn_off();
-        // idle_state_handle();
     }
 }
