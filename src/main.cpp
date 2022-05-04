@@ -4,11 +4,12 @@
 #include "HZM_Power.h"
 #include "HZM_Log.h"
 #include "HZM_Timer.h"
+#include "HZM_AFE.h"
 
 // Function for application main entry.
 int main(void)
 {
-    bool erase_bonds;
+    bool erase_bonds = false;
 
     // Initialize.
     HZM_Log::log_init();
@@ -23,12 +24,12 @@ int main(void)
     HZM_BLE::peer_manager_init();
     HZM_LED::init();
     HZM_Button::init(&erase_bonds);
+    HZM_AFE::init();
 
     // Start execution.
     HZM_Log::print((char*)"Template example started.");
     HZM_Timer::application_timers_start();
     HZM_BLE::advertising_start(erase_bonds);
-    HZM_LED::turn_on();
 
     // Enter main loop.
     for (;;)
