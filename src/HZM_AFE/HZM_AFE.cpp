@@ -29,7 +29,7 @@ void HZM_AFE::init()
 	HZM_AFE::reset();
 	HZM_AFE::stop();
 	HZM_AFE::configure();
-	HZM_AFE::start();
+	// HZM_AFE::start();
 }
 
 // Initialize AFE SPI peripheral

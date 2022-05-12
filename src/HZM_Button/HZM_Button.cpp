@@ -2,8 +2,8 @@ extern "C"
 {
 #include "nrf_gpio.h"
 }
-
 #include "HZM_Button.h"
+#include "HZM_Log.h"
 
 HZM_Button::HZM_Button(/* args */)
 {
@@ -15,8 +15,9 @@ HZM_Button::~HZM_Button()
 
 void HZM_Button::init(bool *p_erase_bonds)
 {
-	nrf_gpio_cfg_output(BUTTON_PIN);
-	*p_erase_bonds = HZM_Button::read();
+	nrf_gpio_cfg_input(BUTTON_PIN, NRF_GPIO_PIN_PULLUP);
+	*p_erase_bonds = !HZM_Button::read();
+	HZM_Log::print((char *)"Button initialized"); 
 }
 
 bool HZM_Button::read()

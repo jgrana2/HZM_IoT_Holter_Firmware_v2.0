@@ -1,8 +1,8 @@
 #include "HZM_BLE.h"
 #include "HZM_LED.h"
 #include "HZM_Button.h"
-#include "HZM_Power.h"
 #include "HZM_Log.h"
+#include "HZM_Power.h"
 #include "HZM_Timer.h"
 #include "HZM_AFE.h"
 
@@ -13,6 +13,7 @@ int main(void)
 
     // Initialize.
     HZM_Log::log_init();
+    hz_log("HORIZON MEDICAL IoT Holter v2.0");
     HZM_Timer::timers_init();
     HZM_Power::power_management_init();
     HZM_BLE::ble_stack_init();
@@ -27,7 +28,7 @@ int main(void)
     HZM_AFE::init();
 
     // Start execution.
-    HZM_Log::print((char*)"Template example started.");
+    hz_log("Execution started.");
     HZM_Timer::application_timers_start();
     HZM_BLE::advertising_start(erase_bonds);
 
@@ -35,5 +36,6 @@ int main(void)
     for (;;)
     {
         HZM_Button::read() ? HZM_LED::turn_on() : HZM_LED::turn_off();
+        HZM_Power::idle_state_handle(); 
     }
 }
