@@ -13,7 +13,7 @@ int main(void)
 
     // Initialize.
     HZM_Log::log_init();
-    hz_log("HORIZON MEDICAL IoT Holter v2.0");
+    hz_log("\r\n\r\nHORIZON MEDICAL IoT Holter v2.0");
     HZM_Timer::timers_init();
     HZM_Power::power_management_init();
     HZM_BLE::ble_stack_init();
@@ -35,7 +35,14 @@ int main(void)
     // Enter main loop.
     for (;;)
     {
-        HZM_Button::read() ? HZM_LED::turn_on() : HZM_LED::turn_off();
-        HZM_Power::idle_state_handle(); 
+        if (!NRF_LOG_PROCESS())
+        {
+            HZM_Button::read() ? HZM_LED::turn_on() : HZM_LED::turn_off();
+            if (HZM_AFE::data_ready)
+            {
+                HZM_AFE::read_data();
+            }
+            // HZM_Power::idle_state_handle();
+        }
     }
 }
