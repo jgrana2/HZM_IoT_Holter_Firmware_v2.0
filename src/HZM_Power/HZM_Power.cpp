@@ -7,7 +7,7 @@ extern "C"
 }
 #include "HZM_Power.h"
 
-HZM_Power::HZM_Power(/* args */)
+HZM_Power::HZM_Power()
 {
 }
 

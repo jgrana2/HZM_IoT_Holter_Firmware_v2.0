@@ -5,7 +5,7 @@ class HZM_LED
 private:
 	/* data */
 public:
-	HZM_LED(/* args */);
+	HZM_LED();
 	~HZM_LED();
 	static void init();
 	static void turn_on();

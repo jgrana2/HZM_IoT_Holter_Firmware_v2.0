@@ -6,7 +6,7 @@ extern "C"
 #include "HZM_LED.h"
 #include "HZM_Log.h"
 
-HZM_LED::HZM_LED(/* args */)
+HZM_LED::HZM_LED()
 {
 }
 

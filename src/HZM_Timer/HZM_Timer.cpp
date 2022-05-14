@@ -5,7 +5,7 @@ extern "C"
 }
 #include "HZM_Timer.h"
 
-HZM_Timer::HZM_Timer(/* args */)
+HZM_Timer::HZM_Timer()
 {
 }
 
