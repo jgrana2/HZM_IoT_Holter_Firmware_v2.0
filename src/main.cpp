@@ -35,14 +35,11 @@ int main(void)
     // Enter main loop.
     for (;;)
     {
-        if (!NRF_LOG_PROCESS())
+        HZM_Button::read() ? HZM_LED::turn_on() : HZM_LED::turn_off();
+        if (HZM_AFE::data_ready)
         {
-            HZM_Button::read() ? HZM_LED::turn_on() : HZM_LED::turn_off();
-            if (HZM_AFE::data_ready)
-            {
-                HZM_AFE::read_data();
-            }
-            // HZM_Power::idle_state_handle();
+            HZM_AFE::read_data();
         }
+        HZM_Power::idle_state_handle();
     }
 }

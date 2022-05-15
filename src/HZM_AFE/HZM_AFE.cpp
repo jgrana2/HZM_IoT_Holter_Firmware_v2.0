@@ -35,7 +35,7 @@ void HZM_AFE::init()
 	HZM_AFE::reset();
 	HZM_AFE::stop();
 	HZM_AFE::configure();
-	// HZM_AFE::start();
+	HZM_AFE::start();
 }
 
 // Initialize AFE SPI peripheral
@@ -110,7 +110,6 @@ void HZM_AFE::stop()
 
 void HZM_AFE::read_data()
 {
-	// static size_t sample_count = 0;
   	HZM_AFE::spi_txrx(HZM_AFE::m_tx_buf, 0, HZM_AFE_SPI_BUFFER_SIZE);
  	HZM_AFE::data_ready = false;	
 	HZM_Log::hexdump(HZM_AFE::m_rx_buf, HZM_AFE_SPI_BUFFER_SIZE);
