@@ -3,7 +3,7 @@
 class HZM_LED
 {
 private:
-	/* data */
+	
 public:
 	HZM_LED();
 	~HZM_LED();

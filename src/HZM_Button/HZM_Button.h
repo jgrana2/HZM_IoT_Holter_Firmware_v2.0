@@ -3,7 +3,7 @@
 class HZM_Button
 {
 private:
-	/* data */
+	
 public:
 	HZM_Button();
 	~HZM_Button();

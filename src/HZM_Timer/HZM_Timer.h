@@ -1,7 +1,7 @@
 class HZM_Timer
 {
 private:
-	/* data */
+	
 public:
 	HZM_Timer();
 	~HZM_Timer();

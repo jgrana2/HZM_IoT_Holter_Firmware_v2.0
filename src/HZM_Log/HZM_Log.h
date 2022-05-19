@@ -13,7 +13,7 @@ extern "C"
 class HZM_Log
 {
 private:
-	/* data */
+	
 public:
 	HZM_Log();
 	~HZM_Log();

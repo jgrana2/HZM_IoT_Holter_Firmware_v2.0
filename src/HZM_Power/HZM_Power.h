@@ -1,7 +1,7 @@
 class HZM_Power
 {
 private:
-	/* data */
+	
 public:
 	HZM_Power();
 	~HZM_Power();
