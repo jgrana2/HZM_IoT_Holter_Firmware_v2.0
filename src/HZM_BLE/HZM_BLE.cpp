@@ -70,6 +70,7 @@ extern "C"
 #include "nrf_log_default_backends.h"
 }
 #include "HZM_BLE.h"
+#include "HZM_BLE_Service.h"
 
 #define DEVICE_NAME "IoT Holter v2.0"       /**< Name of device. Will be included in the advertising data. */
 #define MANUFACTURER_NAME "Horizon Medical" /**< Manufacturer. Will be passed to Device Information Service. */
@@ -101,6 +102,8 @@ extern "C"
 NRF_BLE_GATT_DEF(m_gatt);           /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);             /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising); /**< Advertising module instance. */
+
+static hz_ecgs_t m_ecgs; /**< Structure used to identify the ECG service. */
 
 static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID; /**< Handle of the current connection. */
 
@@ -191,18 +194,6 @@ void HZM_BLE::gatt_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-/**@brief Function for handling Queued Write Module errors.
- *
- * @details A pointer to this function will be passed to each service which may need to inform the
- *          application about an error.
- *
- * @param[in]   nrf_error   Error code containing information about what went wrong.
- */
-static void nrf_qwr_error_handler(uint32_t nrf_error)
-{
-    APP_ERROR_HANDLER(nrf_error);
-}
-
 /**@brief Function for handling the YYY Service events.
  * YOUR_JOB implement a service handler function depending on the event the service you are using can generate
  *
@@ -228,43 +219,6 @@ static void on_yys_evt(ble_yy_service_t     * p_yy_service,
     }
 }
 */
-
-/**@brief Function for initializing services that will be used by the application.
- */
-void HZM_BLE::services_init(void)
-{
-    ret_code_t err_code;
-    nrf_ble_qwr_init_t qwr_init = {0};
-
-    // Initialize Queued Write Module.
-    qwr_init.error_handler = nrf_qwr_error_handler;
-
-    err_code = nrf_ble_qwr_init(&m_qwr, &qwr_init);
-    APP_ERROR_CHECK(err_code);
-
-    /* YOUR_JOB: Add code to initialize the services used by the application.
-       ble_xxs_init_t                     xxs_init;
-       ble_yys_init_t                     yys_init;
-
-       // Initialize XXX Service.
-       memset(&xxs_init, 0, sizeof(xxs_init));
-
-       xxs_init.evt_handler                = NULL;
-       xxs_init.is_xxx_notify_supported    = true;
-       xxs_init.ble_xx_initial_value.level = 100;
-
-       err_code = ble_bas_init(&m_xxs, &xxs_init);
-       APP_ERROR_CHECK(err_code);
-
-       // Initialize YYY Service.
-       memset(&yys_init, 0, sizeof(yys_init));
-       yys_init.evt_handler                  = on_yys_evt;
-       yys_init.ble_yy_initial_value.counter = 0;
-
-       err_code = ble_yy_service_init(&yys_init, &yy_init);
-       APP_ERROR_CHECK(err_code);
-     */
-}
 
 /**@brief Function for handling the Connection Parameters Module.
  *
@@ -537,4 +491,36 @@ void HZM_BLE::advertising_start(bool erase_bonds)
 
         APP_ERROR_CHECK(err_code);
     }
+}
+
+static void nrf_qwr_error_handler(uint32_t nrf_error)
+{
+    APP_ERROR_HANDLER(nrf_error);
+}
+
+/**@brief Function for initializing services that will be used by the application.
+ */
+void HZM_BLE::services_init(void)
+{
+    ret_code_t err_code;
+    nrf_ble_qwr_init_t qwr_init = {0};
+
+    // Initialize Queued Write Module.
+    qwr_init.error_handler = nrf_qwr_error_handler;
+
+    err_code = nrf_ble_qwr_init(&m_qwr, &qwr_init);
+    APP_ERROR_CHECK(err_code);
+
+    // Initialize ECG Service
+    hz_ecgs_init_t ecgs_init;
+    memset(&ecgs_init, 0, sizeof(ecgs_init));
+    ecgs_init.evt_handler = NULL;
+
+    // Set the security level for the ECG Service: can be read and written.
+    BLE_GAP_CONN_SEC_MODE_SET_OPEN(&ecgs_init.ecgs_attr_md.cccd_write_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&ecgs_init.ecgs_attr_md.read_perm);
+    BLE_GAP_CONN_SEC_MODE_SET_NO_ACCESS(&ecgs_init.ecgs_attr_md.write_perm);
+
+    err_code = HZM_BLE_Service::hz_ecgs_init(&m_ecgs, &ecgs_init);
+    APP_ERROR_CHECK(err_code);
 }

@@ -77,14 +77,13 @@ typedef struct
 class HZM_BLE_Service
 {
 private:
-	/* data */
 public:
 	HZM_BLE_Service(/* args */);
 	~HZM_BLE_Service();
 
 	// Function for initializing the ECG Service.
 	static uint32_t hz_ecgs_init(hz_ecgs_t *p_ecgs, const hz_ecgs_init_t *p_ecgs_init);
-
+	
 	// Function for handling the application's BLE Stack events.
 	static void hz_ecgs_on_ble_evt(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt);
 	static uint32_t hz_ecg_char_add(hz_ecgs_t *p_ecgs,

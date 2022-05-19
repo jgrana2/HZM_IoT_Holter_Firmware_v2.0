@@ -6,8 +6,8 @@ extern "C"
 #include "ble_srv_common.h"
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
+#include "nrf_ble_qwr.h"
 }
-
 #include "HZM_BLE_Service.h"
 
 // Initialization of the ECG service
@@ -109,8 +109,8 @@ uint32_t HZM_BLE_Service::hz_ecgs_init(hz_ecgs_t *p_ecgs, const hz_ecgs_init_t *
 
 // Function for adding the ECG Samples characteristic.
 uint32_t HZM_BLE_Service::hz_ecg_char_add(hz_ecgs_t *p_ecgs,
-                         ble_gatts_char_handles_t *char_handle,
-                         uint16_t ble_uuid_value)
+                                          ble_gatts_char_handles_t *char_handle,
+                                          uint16_t ble_uuid_value)
 {
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_md_t cccd_md;
@@ -236,9 +236,9 @@ void HZM_BLE_Service::on_write(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt)
 
 // Function for sending ECG data over BLE.
 uint32_t HZM_BLE_Service::hz_ecg_send(hz_ecgs_t *p_ecgs,
-                     ble_gatts_char_handles_t char_handles,
-                     uint8_t *data,
-                     uint16_t len)
+                                      ble_gatts_char_handles_t char_handles,
+                                      uint8_t *data,
+                                      uint16_t len)
 {
     uint32_t err_code;
 
@@ -271,3 +271,6 @@ uint32_t HZM_BLE_Service::hz_ecg_send(hz_ecgs_t *p_ecgs,
 
     return err_code;
 }
+
+
+

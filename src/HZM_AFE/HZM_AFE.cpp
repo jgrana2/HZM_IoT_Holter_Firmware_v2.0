@@ -112,7 +112,7 @@ void HZM_AFE::read_data()
 {
   	HZM_AFE::spi_txrx(HZM_AFE::m_tx_buf, 0, HZM_AFE_SPI_BUFFER_SIZE);
  	HZM_AFE::data_ready = false;	
-	HZM_Log::hexdump(HZM_AFE::m_rx_buf, HZM_AFE_SPI_BUFFER_SIZE);
+	// HZM_Log::hexdump(HZM_AFE::m_rx_buf, HZM_AFE_SPI_BUFFER_SIZE);
 }
 
 void HZM_AFE::configure()

@@ -1,6 +1,7 @@
 // Copyright (c) 2022 Horizon Medical SAS. All Rights Reserved.
 
 #include "HZM_BLE.h"
+#include "HZM_BLE_Service.h"
 #include "HZM_LED.h"
 #include "HZM_Button.h"
 #include "HZM_Log.h"
