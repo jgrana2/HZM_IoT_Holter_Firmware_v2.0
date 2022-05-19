@@ -60,6 +60,7 @@ SRC_FILES += \
   $(SDK_ROOT)/modules/nrfx/drivers/src/nrfx_spim.c \
   $(PROJ_DIR)/main.cpp \
   $(PROJ_DIR)/HZM_BLE/HZM_BLE.cpp \
+  $(PROJ_DIR)/HZM_BLE/HZM_BLE_Service.cpp \
   $(PROJ_DIR)/HZM_LED/HZM_LED.cpp \
   $(PROJ_DIR)/HZM_Button/HZM_Button.cpp \
   $(PROJ_DIR)/HZM_Log/HZM_Log.cpp \
