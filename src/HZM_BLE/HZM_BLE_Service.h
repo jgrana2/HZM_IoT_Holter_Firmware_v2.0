@@ -17,9 +17,6 @@ extern "C"
 #define BLE_UUID_ECG_CHANNEL_6 0x8176					    // ECG Channel 6 characteristic UUID
 #define BLE_UUID_ECG_CHANNEL_7 0x8177					    // ECG Channel 7 characteristic UUID
 #define BLE_UUID_ECG_CHANNEL_8 0x8178					    // ECG Channel 8 characteristic UUID
-#define HRZ_CHANNEL_LEN 4						    // Number of bytes per sample per channel. 3 for non filtered data, 4 for filtered
-#define HRZ_SAMPLES_PER_PACKET 21					    // Number of samples per BLE packet. 28 for non filtered data, 21 for filtered
-#define HRZ_ECGS_MAX_BUFFER_SIZE (HRZ_CHANNEL_LEN * HRZ_SAMPLES_PER_PACKET) // Total number of bytes per channel per BLE send. Usually 84
 
 // ECG Service event type
 typedef enum
@@ -89,9 +86,10 @@ public:
 	static uint32_t hz_ecg_char_add(hz_ecgs_t *p_ecgs,
 					ble_gatts_char_handles_t *char_handle,
 					uint16_t ble_uuid_value);
-	static void on_connect(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt);
-	static void on_disconnect(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt);
-	static void on_write(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt);
+	static void on_connect(hz_ecgs_t *p_ecgs, ble_evt_t const *p_ble_evt);
+	static void on_disconnect(hz_ecgs_t *p_ecgs, ble_evt_t const *p_ble_evt);
+	static void on_hrm_cccd_write(hz_ecgs_t *p_ecgs, ble_gatts_evt_write_t const *p_evt_write);
+	static void on_write(hz_ecgs_t *p_ecgs, ble_evt_t const *p_ble_evt);
 	static uint32_t hz_ecg_send(hz_ecgs_t *p_ecgs,
 				    ble_gatts_char_handles_t char_handles,
 				    uint8_t *data,

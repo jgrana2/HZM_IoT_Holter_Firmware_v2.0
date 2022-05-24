@@ -14,6 +14,9 @@ extern "C"
 #define HZM_AFE_SPI_MOSI_PIN 17
 #define HZM_AFE_DRDY_PIN 18
 #define HZM_AFE_SPI_BUFFER_SIZE 27 // 3 Status bytes + 24 bytes for channels = 216 SCLKs (Datasheet page 60) = 27 bytes
+#define HRZ_CHANNEL_LEN 3						    // Number of bytes per sample per channel. 3 for non filtered data, 4 for filtered
+#define HRZ_SAMPLES_PER_PACKET 28					    // Number of samples per BLE packet. 28 for non filtered data, 21 for filtered
+#define HRZ_ECGS_MAX_BUFFER_SIZE (HRZ_CHANNEL_LEN * HRZ_SAMPLES_PER_PACKET) // Total number of bytes per channel per BLE send. Usually 84
 
 // SPI Commands
 #define RREG 0x20
@@ -22,6 +25,13 @@ extern "C"
 
 // Register addresses
 #define ID 0x00
+
+typedef struct
+{
+	uint8_t MSB;
+	uint8_t middle_byte;
+	uint8_t LSB;
+} HZM_AFE_Sample_t;
 
 class HZM_AFE
 {
@@ -32,6 +42,16 @@ public:
 	static uint8_t m_tx_buf[HZM_AFE_SPI_BUFFER_SIZE];
 	static volatile bool started;
 	static volatile bool data_ready;
+	static volatile bool data_read;
+	static HZM_AFE_Sample_t status[HRZ_ECGS_MAX_BUFFER_SIZE];
+	static HZM_AFE_Sample_t channel1_arr[HRZ_ECGS_MAX_BUFFER_SIZE];
+	static HZM_AFE_Sample_t channel2_arr[HRZ_ECGS_MAX_BUFFER_SIZE];
+	static HZM_AFE_Sample_t channel3_arr[HRZ_ECGS_MAX_BUFFER_SIZE];
+	static HZM_AFE_Sample_t channel4_arr[HRZ_ECGS_MAX_BUFFER_SIZE];
+	static HZM_AFE_Sample_t channel5_arr[HRZ_ECGS_MAX_BUFFER_SIZE];
+	static HZM_AFE_Sample_t channel6_arr[HRZ_ECGS_MAX_BUFFER_SIZE];
+	static HZM_AFE_Sample_t channel7_arr[HRZ_ECGS_MAX_BUFFER_SIZE];
+	static HZM_AFE_Sample_t channel8_arr[HRZ_ECGS_MAX_BUFFER_SIZE];
 
 	HZM_AFE();
 	~HZM_AFE();

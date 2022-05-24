@@ -1,7 +1,6 @@
 // Copyright (c) 2022 Horizon Medical SAS. All Rights Reserved.
 
 #include "HZM_BLE.h"
-#include "HZM_BLE_Service.h"
 #include "HZM_LED.h"
 #include "HZM_Button.h"
 #include "HZM_Log.h"
@@ -42,6 +41,11 @@ int main(void)
         if (HZM_AFE::data_ready)
         {
             HZM_AFE::read_data();
+            if (HZM_AFE::data_read)
+            {
+                HZM_BLE::send_data_over_BLE();
+            }
+            
         }
         HZM_Power::idle_state_handle();
     }

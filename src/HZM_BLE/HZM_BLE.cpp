@@ -70,7 +70,7 @@ extern "C"
 #include "nrf_log_default_backends.h"
 }
 #include "HZM_BLE.h"
-#include "HZM_BLE_Service.h"
+#include "HZM_AFE.h"
 
 #define DEVICE_NAME "IoT Holter v2.0"       /**< Name of device. Will be included in the advertising data. */
 #define MANUFACTURER_NAME "Horizon Medical" /**< Manufacturer. Will be passed to Device Information Service. */
@@ -324,59 +324,77 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
  * @param[in]   p_ble_evt   Bluetooth stack event.
  * @param[in]   p_context   Unused.
  */
-static void ble_evt_handler(ble_evt_t const *p_ble_evt, void *p_context)
+void HZM_BLE::ble_evt_handler(ble_evt_t const *p_ble_evt, void *p_context)
 {
-    ret_code_t err_code = NRF_SUCCESS;
-
     switch (p_ble_evt->header.evt_id)
     {
-    case BLE_GAP_EVT_DISCONNECTED:
-        NRF_LOG_INFO("Disconnected.");
-        // HZM_LED indication will be changed when advertising starts.
-        break;
-
     case BLE_GAP_EVT_CONNECTED:
-        NRF_LOG_INFO("Connected.");
-        err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
-        APP_ERROR_CHECK(err_code);
-        m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
-        err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
-        APP_ERROR_CHECK(err_code);
+        HZM_BLE::on_connect(&m_ecgs, p_ble_evt);
         break;
 
-    case BLE_GAP_EVT_PHY_UPDATE_REQUEST:
-    {
-        NRF_LOG_DEBUG("PHY update request.");
-        ble_gap_phys_t const phys =
-            {
-                BLE_GAP_PHY_AUTO,
-                BLE_GAP_PHY_AUTO,
-            };
-        err_code = sd_ble_gap_phy_update(p_ble_evt->evt.gap_evt.conn_handle, &phys);
-        APP_ERROR_CHECK(err_code);
-    }
+    case BLE_GAP_EVT_DISCONNECTED:
+        HZM_BLE_Service::on_disconnect(&m_ecgs, p_ble_evt);
     break;
 
-    case BLE_GATTC_EVT_TIMEOUT:
-        // Disconnect on GATT Client timeout event.
-        NRF_LOG_DEBUG("GATT Client Timeout.");
-        err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gattc_evt.conn_handle,
-                                         BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
-        APP_ERROR_CHECK(err_code);
-        break;
-
-    case BLE_GATTS_EVT_TIMEOUT:
-        // Disconnect on GATT Server timeout event.
-        NRF_LOG_DEBUG("GATT Server Timeout.");
-        err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gatts_evt.conn_handle,
-                                         BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
-        APP_ERROR_CHECK(err_code);
+    case BLE_GATTS_EVT_WRITE:
+        HZM_BLE_Service::on_write(&m_ecgs, p_ble_evt);
         break;
 
     default:
         // No implementation needed.
         break;
     }
+    // ret_code_t err_code = NRF_SUCCESS;
+
+    // switch (p_ble_evt->header.evt_id)
+    // {
+    // case BLE_GAP_EVT_DISCONNECTED:
+    //     NRF_LOG_INFO("Disconnected.");
+    //     // HZM_LED indication will be changed when advertising starts.
+    //     break;
+
+    // case BLE_GAP_EVT_CONNECTED:
+    //     NRF_LOG_INFO("Connected.");
+    //     err_code = bsp_indication_set(BSP_INDICATE_CONNECTED);
+    //     APP_ERROR_CHECK(err_code);
+    //     m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+    //     err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
+    //     APP_ERROR_CHECK(err_code);
+    //     break;
+
+    // case BLE_GAP_EVT_PHY_UPDATE_REQUEST:
+    // {
+    //     NRF_LOG_DEBUG("PHY update request.");
+    //     ble_gap_phys_t const phys =
+    //         {
+    //             BLE_GAP_PHY_AUTO,
+    //             BLE_GAP_PHY_AUTO,
+    //         };
+    //     err_code = sd_ble_gap_phy_update(p_ble_evt->evt.gap_evt.conn_handle, &phys);
+    //     APP_ERROR_CHECK(err_code);
+    // }
+    // break;
+
+    // case BLE_GATTC_EVT_TIMEOUT:
+    //     // Disconnect on GATT Client timeout event.
+    //     NRF_LOG_DEBUG("GATT Client Timeout.");
+    //     err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gattc_evt.conn_handle,
+    //                                      BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
+    //     APP_ERROR_CHECK(err_code);
+    //     break;
+
+    // case BLE_GATTS_EVT_TIMEOUT:
+    //     // Disconnect on GATT Server timeout event.
+    //     NRF_LOG_DEBUG("GATT Server Timeout.");
+    //     err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gatts_evt.conn_handle,
+    //                                      BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
+    //     APP_ERROR_CHECK(err_code);
+    //     break;
+
+    // default:
+    //     // No implementation needed.
+    //     break;
+    // }
 }
 
 /**@brief Function for initializing the BLE stack.
@@ -401,7 +419,7 @@ void HZM_BLE::ble_stack_init(void)
     APP_ERROR_CHECK(err_code);
 
     // Register a handler for BLE events.
-    NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
+    NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, HZM_BLE::ble_evt_handler, NULL);
 }
 
 /**@brief Function for the Peer Manager initialization.
@@ -523,4 +541,50 @@ void HZM_BLE::services_init(void)
 
     err_code = HZM_BLE_Service::hz_ecgs_init(&m_ecgs, &ecgs_init);
     APP_ERROR_CHECK(err_code);
+}
+
+// Function for handling the Connect event.
+void HZM_BLE::on_connect(hz_ecgs_t *p_ecgs, ble_evt_t const *p_ble_evt)
+{
+    ret_code_t err_code;
+    NRF_LOG_INFO("Connected.");
+    m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+    p_ecgs->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+    err_code = nrf_ble_qwr_conn_handle_assign(&m_qwr, m_conn_handle);
+    APP_ERROR_CHECK(err_code);
+    HZM_AFE::start();
+}
+
+/**
+ * @brief Function to one channel data over BLE
+ */
+void HZM_BLE::hz_send_ecg_channel(ble_gatts_char_handles_t handle, uint8_t *data)
+{
+    ret_code_t err_code;
+
+    err_code = HZM_BLE_Service::hz_ecg_send(&m_ecgs, handle, data, HRZ_ECGS_MAX_BUFFER_SIZE);
+    if (err_code == NRF_ERROR_RESOURCES)
+    {
+        // Send again
+        // err_code = HZM_BLE_Service::hz_ecg_send(&m_ecgs, handle, data, HRZ_ECGS_MAX_BUFFER_SIZE);
+        NRF_LOG_WARNING("NRF_ERROR_RESOURCES, handle value: %d", handle.value_handle);
+    }
+    else
+    {
+        // NRF_LOG_INFO("ERROR Code %d, handle value: %d", err_code, handle.value_handle);
+    }
+}
+
+void HZM_BLE::send_data_over_BLE()
+{
+    // Send samples over BLE
+    HZM_BLE::hz_send_ecg_channel(m_ecgs.ecg_channel_1_handles, (uint8_t *)HZM_AFE::channel1_arr);
+    HZM_BLE::hz_send_ecg_channel(m_ecgs.ecg_channel_2_handles, (uint8_t *)HZM_AFE::channel2_arr);
+    HZM_BLE::hz_send_ecg_channel(m_ecgs.ecg_channel_3_handles, (uint8_t *)HZM_AFE::channel3_arr);
+    HZM_BLE::hz_send_ecg_channel(m_ecgs.ecg_channel_4_handles, (uint8_t *)HZM_AFE::channel4_arr);
+    HZM_BLE::hz_send_ecg_channel(m_ecgs.ecg_channel_5_handles, (uint8_t *)HZM_AFE::channel5_arr);
+    HZM_BLE::hz_send_ecg_channel(m_ecgs.ecg_channel_6_handles, (uint8_t *)HZM_AFE::channel6_arr);
+    HZM_BLE::hz_send_ecg_channel(m_ecgs.ecg_channel_7_handles, (uint8_t *)HZM_AFE::channel7_arr);
+    HZM_BLE::hz_send_ecg_channel(m_ecgs.ecg_channel_8_handles, (uint8_t *)HZM_AFE::channel8_arr);
+    HZM_AFE::data_read = false;
 }

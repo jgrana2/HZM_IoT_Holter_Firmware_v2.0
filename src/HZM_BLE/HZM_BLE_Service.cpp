@@ -9,6 +9,7 @@ extern "C"
 #include "nrf_ble_qwr.h"
 }
 #include "HZM_BLE_Service.h"
+#include "HZM_AFE.h"
 
 // Initialization of the ECG service
 uint32_t HZM_BLE_Service::hz_ecgs_init(hz_ecgs_t *p_ecgs, const hz_ecgs_init_t *p_ecgs_init)
@@ -163,44 +164,40 @@ uint32_t HZM_BLE_Service::hz_ecg_char_add(hz_ecgs_t *p_ecgs,
                                            char_handle);
 }
 
-// BLE event handler
-void HZM_BLE_Service::hz_ecgs_on_ble_evt(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt)
-{
-    switch (p_ble_evt->header.evt_id)
-    {
-    case BLE_GAP_EVT_CONNECTED:
-        on_connect(p_ecgs, p_ble_evt);
-        break;
+// // BLE event handler
+// void HZM_BLE_Service::hz_ecgs_on_ble_evt(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt)
+// {
+//     switch (p_ble_evt->header.evt_id)
+//     {
+//     case BLE_GAP_EVT_CONNECTED:
+//         on_connect(p_ecgs, p_ble_evt);
+//         break;
 
-    case BLE_GAP_EVT_DISCONNECTED:
-        on_disconnect(p_ecgs, p_ble_evt);
-        break;
+//     case BLE_GAP_EVT_DISCONNECTED:
+//         on_disconnect(p_ecgs, p_ble_evt);
+//         break;
 
-    case BLE_GATTS_EVT_WRITE:
-        on_write(p_ecgs, p_ble_evt);
-        break;
+//     case BLE_GATTS_EVT_WRITE:
+//         on_write(p_ecgs, p_ble_evt);
+//         break;
 
-    default:
-        // No implementation needed.
-        break;
-    }
-}
-
-// Function for handling the Connect event.
-void HZM_BLE_Service::on_connect(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt)
-{
-    p_ecgs->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
-}
+//     default:
+//         // No implementation needed.
+//         break;
+//     }
+// }
 
 // Function for handling the Disconnect event.
-void HZM_BLE_Service::on_disconnect(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt)
+void HZM_BLE_Service::on_disconnect(hz_ecgs_t *p_ecgs, ble_evt_t const *p_ble_evt)
 {
     UNUSED_PARAMETER(p_ble_evt);
     p_ecgs->conn_handle = BLE_CONN_HANDLE_INVALID;
+    NRF_LOG_INFO("Disconnected");
+    HZM_AFE::stop();
 }
 
 // Function for handling write events to the CCCD and pass them to the
-void on_hrm_cccd_write(hz_ecgs_t *p_ecgs, ble_gatts_evt_write_t *p_evt_write)
+void HZM_BLE_Service::on_hrm_cccd_write(hz_ecgs_t *p_ecgs, ble_gatts_evt_write_t const *p_evt_write)
 {
     if (p_evt_write->len == 2)
     {
@@ -224,13 +221,13 @@ void on_hrm_cccd_write(hz_ecgs_t *p_ecgs, ble_gatts_evt_write_t *p_evt_write)
 }
 
 // Function for handling the Write event.
-void HZM_BLE_Service::on_write(hz_ecgs_t *p_ecgs, ble_evt_t *p_ble_evt)
+void HZM_BLE_Service::on_write(hz_ecgs_t *p_ecgs, ble_evt_t const *p_ble_evt)
 {
-    ble_gatts_evt_write_t *p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
+    const ble_gatts_evt_write_t *p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
 
     if (p_evt_write->handle == p_ecgs->ecg_status_handles.cccd_handle)
     {
-        on_hrm_cccd_write(p_ecgs, p_evt_write);
+        HZM_BLE_Service::on_hrm_cccd_write(p_ecgs, p_evt_write);
     }
 }
 
